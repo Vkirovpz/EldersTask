@@ -8,7 +8,7 @@ namespace TestElders.Models
 {
     public class Carnivore : Animal
     {
-        public override char Char { get;} = 'x';
+        public override char Char { get; } = 'x';
         
     }
 }
