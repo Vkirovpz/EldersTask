@@ -2,7 +2,6 @@
 using System.Numerics;
 using System.Threading;
 using System.Threading.Channels;
-using TestElders.Helpers;
 using TestElders.Models;
 
 public class Program
@@ -14,6 +13,8 @@ public class Program
         {
             world.Cycle();
         }
+
+        Console.WriteLine("Game over");
     }
 
 }

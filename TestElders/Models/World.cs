@@ -10,7 +10,7 @@ namespace TestElders.Models
 {
     public class World
     {
-        private const int worldSize = 5;
+        private const int worldSize = 3;
         private readonly List<Cell> Cells = new();
 
         public IEnumerable<Animal> Animals
@@ -58,15 +58,21 @@ namespace TestElders.Models
                 else
                     Cells.First(x => x.Position == pos).Visit(new Carnivore(pos));
             }
-            
+
         }
 
         public void Cycle()
         {
+            var animalsCopy = new List<Animal>();
 
             foreach (var animal in Animals)
             {
+                animalsCopy.Add(animal);
+            }
 
+            for (int i = 0; i < animalsCopy.Count - 1; i++)
+            {
+                var animal = animalsCopy[i];
                 var newPosition = animal.Move();
                 if (IsValidPosition(newPosition))
                 {
@@ -77,19 +83,44 @@ namespace TestElders.Models
                 }
             }
 
+            var carnivoresCopy = new List<Carnivore>();
 
-            foreach (var animal in Animals)
+            foreach (var carnivore in Carnivores)
             {
-                if (animal.Eat())
-                {
+                carnivoresCopy.Add(carnivore);
+            }   
 
+            foreach (var carnivore in carnivoresCopy)
+            {
+                var cell = Cells.First(x => x.Position == carnivore.Position);
+                var herbivoresInCell = cell.Animals.OfType<Herbivore>();
+                if (herbivoresInCell.Count() > 0)
+                {
+                    var herbivore = herbivoresInCell.First();
+                    if (carnivore.Eat())
+                    {
+                        cell.Leave(herbivore);
+                    }
                 }
+
             }
+
+            //foreach (var animal in Animals)
+            //{
+            //    var newPosition = animal.Move();
+            //    if (IsValidPosition(newPosition))
+            //    {
+            //        var oldCell = Cells.First(x => x.Position == animal.Position);
+            //        oldCell.Leave(animal);
+            //        var newCell = Cells.First(x => x.Position == newPosition);
+            //        newCell.Visit(animal);
+            //    }
+            //}
         }
 
         private bool IsValidPosition(Position position)
         {
-            return position.X >= 0 && position.X <= worldSize && position.Y >= 0 && position.Y <= worldSize;
+            return position.X > 0 && position.X < worldSize - 1 && position.Y > 0 && position.Y < worldSize - 1;
         }
     }
 }

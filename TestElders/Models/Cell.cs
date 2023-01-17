@@ -14,8 +14,9 @@
         public void Visit(Animal animal)
         {
             animal.Move(Position);
-            Animals.Add(animal);
 
+            Animals.Add(animal);
+            
         }
 
         public void Leave(Animal animal)
