@@ -15,6 +15,7 @@
         {
             animal.Move(Position);
             Animals.Add(animal);
+
         }
 
         public void Leave(Animal animal)

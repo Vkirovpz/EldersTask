@@ -47,20 +47,26 @@ namespace TestElders.Models
                 }
             }
 
-            var col = Dice.Roll(0, worldSize + 1);
-            var row = Dice.Roll(0, worldSize + 1);
-            var pos = Position.At(col, row);
-            var type = Dice.Roll(0, 2);
-            if (type == 0)
-                Cells.First(x => x.Position == pos).Visit(new Herbivore(pos));
-            else
-                Cells.First(x => x.Position == pos).Visit(new Carnivore(pos));
+            for (int i = 0; i < 4; i++)
+            {
+                var col = Dice.Roll(0, worldSize);
+                var row = Dice.Roll(0, worldSize);
+                var pos = Position.At(col, row);
+                var type = Dice.Roll(0, 2);
+                if (type == 0)
+                    Cells.First(x => x.Position == pos).Visit(new Herbivore(pos));
+                else
+                    Cells.First(x => x.Position == pos).Visit(new Carnivore(pos));
+            }
+            
         }
 
         public void Cycle()
         {
+
             foreach (var animal in Animals)
             {
+
                 var newPosition = animal.Move();
                 if (IsValidPosition(newPosition))
                 {
@@ -71,9 +77,13 @@ namespace TestElders.Models
                 }
             }
 
+
             foreach (var animal in Animals)
             {
-                animal.Eat();
+                if (animal.Eat())
+                {
+
+                }
             }
         }
 
@@ -81,18 +91,5 @@ namespace TestElders.Models
         {
             return position.X >= 0 && position.X <= worldSize && position.Y >= 0 && position.Y <= worldSize;
         }
-
-
-        //public static void PrintMatrix(char[,] matrix)
-        //{
-        //    for (int row = 0; row < matrix.GetLength(0); row++)
-        //    {
-        //        for (int col = 0; col < matrix.GetLength(1); col++)
-        //        {
-        //            Console.Write("{0}", matrix[row, col]);
-        //        }
-        //        Console.WriteLine();
-        //    }
-        //}
     }
 }

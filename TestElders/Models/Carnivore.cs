@@ -14,12 +14,12 @@ namespace TestElders.Models
 
         public override bool Eat()
         {
-            int randomValue = Random.Shared.Next(0, 100);
+            int randomValue = Dice.Roll(0, 100);
             if (randomValue < attackChance)
             {
                 return true;
             }
-            else { return false; }
+            return false;
         }
     }
 }
