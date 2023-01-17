@@ -8,7 +8,18 @@ namespace TestElders.Models
 {
     public class Carnivore : Animal
     {
-        public override char Char { get; } = 'x';
-        
+        private const int attackChance = 60;
+
+        public Carnivore(Position position) : base(position) { }
+
+        public override bool Eat()
+        {
+            int randomValue = Random.Shared.Next(0, 100);
+            if (randomValue < attackChance)
+            {
+                return true;
+            }
+            else { return false; }
+        }
     }
 }

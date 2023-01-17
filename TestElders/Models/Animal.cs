@@ -10,33 +10,28 @@ namespace TestElders.Models
 {
     public abstract class Animal
     {
-        public int Row { get; set; }
-        public int Col { get; set; }
-
-        public abstract char Char { get;}
-
-        public void Move(char[,] matrix, string direction)
+        public Animal(Position position)
         {
-            if (direction == "right" && this.Col <= matrix.GetLength(1) - 2)
-            {
-                matrix[this.Row, this.Col] = '▒';
-                this.Col++;
-            }
-            else if (direction == "left" && this.Col > 0)
-            {
-                matrix[this.Row, this.Col] = '▒';
-                this.Col--;
-            }
-            else if (direction == "up" && this.Row > 0)
-            {
-                matrix[this.Row, this.Col] = '▒';
-                this.Row--;
-            }
-            else if (direction == "down" && this.Row <= matrix.GetLength(0) - 2)
-            {
-                matrix[this.Row, this.Col] = '▒';
-                this.Row++;
-            }
+            Position = position;
         }
+
+        public Position Position { get; private set; }
+
+        public void Move(Position newPosition)
+        {
+            Position = newPosition;
+        }
+
+        public Position Move()
+        {
+            var direction = Random.Shared.Next(0, 4);
+            if (direction == 0) return Position.Up();
+            else if (direction == 1) return Position.Down();
+            else if (direction == 2) return Position.Left();
+            
+            return Position.Right();
+        }
+
+        public abstract bool Eat();
     }
 }

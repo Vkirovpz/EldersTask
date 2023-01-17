@@ -8,6 +8,11 @@ namespace TestElders.Models
 {
     public class Herbivore : Animal
     {
-        public override char Char { get;} = 'o';
+        public Herbivore(Position position) : base(position) { }
+
+        public override bool Eat() 
+        {
+            return false;
+        }
     }
 }
