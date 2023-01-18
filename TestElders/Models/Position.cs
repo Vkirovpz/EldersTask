@@ -19,11 +19,21 @@ namespace TestElders.Models
         public Position Left() => new (X - 1, Y);
         public Position Right() => new (X + 1, Y);
 
-        public override bool Equals(object? obj) => Equals(obj as Position);
+        public Position To(Direction direction)
+        {
+            if (direction == Direction.Up) return Up();
+            else if (direction == Direction.Down) return Down();
+            else if (direction == Direction.Left) return Left();
+            else if (direction == Direction.Right) return Right();
+
+            throw new NotSupportedException($"Unsupported direction {direction}");
+        }
+
+        public override bool Equals(object obj) => Equals(obj as Position);
 
         public override int GetHashCode() => HashCode.Combine(X, Y);
 
-        public bool Equals(Position? other)
+        public bool Equals(Position other)
         {
             if (other is null) return false;
 

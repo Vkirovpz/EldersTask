@@ -10,28 +10,29 @@ namespace TestElders.Models
 {
     public abstract class Animal
     {
-        public Animal(Position position)
+        public Animal(Cell cell)
         {
-            Position = position;
+            Cell = cell ?? throw new ArgumentNullException(nameof(cell));
         }
 
-        public Position Position { get; private set; }
+        public Cell Cell { get; private set; }
 
-        public void Move(Position newPosition)
+        public void Move(Cell newCell)
         {
-            Position = newPosition;
+            Cell = newCell ?? throw new ArgumentNullException(nameof(newCell));
         }
 
         public Position Move()
         {
-            var direction = Random.Shared.Next(0, 4);
-            if (direction == 0) return Position.Up();
-            else if (direction == 1) return Position.Down();
-            else if (direction == 2) return Position.Left();
-            
-            return Position.Right();
+            var direction = Direction.Random();
+            return Cell.Position.To(direction);
         }
 
-        public abstract bool Eat();
+        public void Die()
+        {
+            Cell.Leave(this);
+        }
+
+        public abstract void Eat();
     }
 }

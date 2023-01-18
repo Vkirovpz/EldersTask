@@ -8,13 +8,12 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var world = new World();
-        while (world.Herbivores.Any())
+        var world = new World(3, 5);
+        while (world.CanCycle)
         {
             world.Cycle();
         }
 
         Console.WriteLine("Game over");
     }
-
 }

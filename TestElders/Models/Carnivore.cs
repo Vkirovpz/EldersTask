@@ -8,18 +8,22 @@ namespace TestElders.Models
 {
     public class Carnivore : Animal
     {
-        private const int attackChance = 60;
+        private const int AttackChance = 95;
 
-        public Carnivore(Position position) : base(position) { }
+        public Carnivore(Cell cell) : base(cell) { }
 
-        public override bool Eat()
+        public override void Eat()
         {
+            var other = Cell.Animals.Where(x => x != this).OfType<Herbivore>();
+            if (other.Any() == false)
+                return;
+
+            var herbivore = other.First();
             int randomValue = Dice.Roll(0, 100);
-            if (randomValue < attackChance)
+            if (randomValue < AttackChance)
             {
-                return true;
+                herbivore.Die();
             }
-            return false;
         }
     }
 }
