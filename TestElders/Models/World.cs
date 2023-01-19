@@ -12,6 +12,7 @@ namespace TestElders.Models
     {
         private readonly List<Cell> Cells = new();
         private readonly int size;
+        private readonly IRandomNumberGenerator rng;
 
         public IEnumerable<Animal> Animals => Cells.SelectMany(x => x.Animals);
 
@@ -20,13 +21,15 @@ namespace TestElders.Models
         public IEnumerable<Carnivore> Carnivores => Animals.OfType<Carnivore>();
 
         public bool CanCycle => Herbivores.Any() && Carnivores.Any();
-
-        public World(int size, int animalsCount)
+            
+        public World(int size, int animalsCount, IRandomNumberGenerator rng)
         {
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "World size must be a positive number");
             if (animalsCount <= 0) throw new ArgumentOutOfRangeException(nameof(animalsCount), "The amount of animals must be a positive number");
+            if (rng is null) throw new ArgumentNullException(nameof(rng));
 
             this.size = size;
+            this.rng = rng;
 
             for (int x = 0; x < size; x++)
             {
@@ -38,15 +41,16 @@ namespace TestElders.Models
 
             for (int i = 0; i < animalsCount; i++)
             {
-                var col = Dice.Roll(0, size);
-                var row = Dice.Roll(0, size);
+                var col = rng.GetBetween(0, size);
+                var row = rng.GetBetween(0, size);
                 var pos = Position.At(col, row);
-                var type = Dice.Roll(0, 2);
+                var raceType = rng.GetBetween(0, 2);
+                var gender = Gender.Random(rng);
                 var cell = Cells.First(x => x.Position == pos);
-                if (type == 0)
-                    cell.Visit(new Herbivore(cell));
+                if (raceType == 0)
+                    cell.Spawn(new Herbivore(cell, gender));
                 else
-                    cell.Visit(new Carnivore(cell));
+                    cell.Spawn(new Carnivore(cell, gender));
             }
         }
 
@@ -54,7 +58,14 @@ namespace TestElders.Models
         {
             foreach (var animal in Animals.ToList())
             {
-                var newPosition = animal.Move();
+                var cell = Cells.First(x => x.Position == animal.Cell.Position);
+                animal.Coupling(rng);
+                animal.Eat(rng);
+            }
+
+            foreach (var animal in Animals.ToList())
+            {
+                var newPosition = animal.Move(rng);
                 if (IsValidPosition(newPosition) == false)
                     continue;
 
@@ -62,12 +73,6 @@ namespace TestElders.Models
                 oldCell.Leave(animal);
                 var newCell = Cells.First(x => x.Position == newPosition);
                 newCell.Visit(animal);
-            }
-
-            foreach (var animal in Animals.ToList())
-            {
-                var cell = Cells.First(x => x.Position == animal.Cell.Position);
-                animal.Eat();
             }
         }
 

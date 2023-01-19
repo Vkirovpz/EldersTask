@@ -24,9 +24,9 @@
             this.value = value;
         }
 
-        public static Direction Random()
+        public static Direction Random(IRandomNumberGenerator rng)
         {
-            var direction = System.Random.Shared.Next(0, directionsMap.Count);
+            var direction = rng.GetBetween(0, directionsMap.Count);
             return new Direction(directionsMap[direction]);
         }
 

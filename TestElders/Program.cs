@@ -8,7 +8,8 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var world = new World(3, 5);
+        var dice = new Dice();
+        var world = new World(1, 8, dice);
         while (world.CanCycle)
         {
             world.Cycle();

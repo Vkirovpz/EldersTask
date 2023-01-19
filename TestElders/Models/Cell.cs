@@ -19,6 +19,13 @@
             Animals.Add(animal);          
         }
 
+        public void Spawn(Animal animal)
+        {
+            if (animal is null) throw new ArgumentNullException(nameof(animal));
+
+            Animals.Add(animal);
+        }
+
         public void Leave(Animal animal)
         {
             if (animal is null) throw new ArgumentNullException(nameof(animal));

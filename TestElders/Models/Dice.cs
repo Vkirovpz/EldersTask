@@ -1,7 +1,7 @@
 ﻿namespace TestElders.Models
 {
-    public class Dice
+    public class Dice : IRandomNumberGenerator
     {
-        public static int Roll(int min, int max) => Random.Shared.Next(min, max);
+        public int GetBetween(int min, int max) => Random.Shared.Next(min, max);
     }
 }

@@ -9,21 +9,35 @@ namespace TestElders.Models
     public class Carnivore : Animal
     {
         private const int AttackChance = 95;
+        private const int CouplingChance = 95;
 
-        public Carnivore(Cell cell) : base(cell) { }
+        public Carnivore(Cell cell, Gender gender) : base(cell, gender) { }
 
-        public override void Eat()
+        public override void Coupling(IRandomNumberGenerator rng)
         {
-            var other = Cell.Animals.Where(x => x != this).OfType<Herbivore>();
-            if (other.Any() == false)
+            var others = Cell.Animals.Where(x => x != this).OfType<Carnivore>();
+            if (others.Any() == false)
                 return;
 
-            var herbivore = other.First();
-            int randomValue = Dice.Roll(0, 100);
+            var otherCarnivore = others.FirstOrDefault(x => x.Gender != Gender);
+            if (otherCarnivore is null)
+                return;
+
+            int randomValue = rng.GetBetween(0, 100);
+            if (randomValue < CouplingChance)
+                Cell.Spawn(new Carnivore(Cell, Gender.Random(rng)));
+        }
+
+        public override void Eat(IRandomNumberGenerator rng)
+        {
+            var others = Cell.Animals.Where(x => x != this).OfType<Herbivore>();
+            if (others.Any() == false)
+                return;
+
+            var herbivore = others.First();
+            int randomValue = rng.GetBetween(0, 100);
             if (randomValue < AttackChance)
-            {
                 herbivore.Die();
-            }
         }
     }
 }
