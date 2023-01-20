@@ -2,6 +2,8 @@
 {
     public class Cell
     {
+        private readonly List<Animal> animals = new();
+
         public Cell(Position position)
         {
             Position = position ?? throw new ArgumentNullException(nameof(position));
@@ -9,28 +11,28 @@
 
         public Position Position { get; }
 
-        public IList<Animal> Animals { get; } = new List<Animal>();
+        public IEnumerable<Animal> Animals => animals.AsReadOnly();
 
         public void Visit(Animal animal)
         {
             if (animal is null) throw new ArgumentNullException(nameof(animal));
 
             animal.Move(this);
-            Animals.Add(animal);          
+            animals.Add(animal);
         }
 
         public void Spawn(Animal animal)
         {
             if (animal is null) throw new ArgumentNullException(nameof(animal));
 
-            Animals.Add(animal);
+            animals.Add(animal);
         }
 
         public void Leave(Animal animal)
         {
             if (animal is null) throw new ArgumentNullException(nameof(animal));
 
-            Animals.Remove(animal);
+            animals.Remove(animal);
         }
     }
 }

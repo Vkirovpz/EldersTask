@@ -8,7 +8,7 @@ namespace TestElders.Models
 {
     public class Herbivore : Animal
     {
-        private const int CouplingChance = 95;
+        private const int CouplingChanceLimit = 5;
         public Herbivore(Cell cell, Gender gender) : base(cell, gender) { }
 
         public override void Eat(IRandomNumberGenerator rng) { }
@@ -24,7 +24,7 @@ namespace TestElders.Models
                 return;
 
             int randomValue = rng.GetBetween(0, 100);
-            if (randomValue < CouplingChance)
+            if (randomValue > CouplingChanceLimit)
                 Cell.Spawn(new Herbivore(Cell, Gender.Random(rng)));
         }
     }

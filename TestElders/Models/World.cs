@@ -8,17 +8,21 @@ using System.Threading.Tasks;
 
 namespace TestElders.Models
 {
-    public class World
+    public class World<TCarnivore, THerbivore>
+        where TCarnivore : Animal
+        where THerbivore : Animal
     {
-        private readonly List<Cell> Cells = new();
+        private readonly List<Cell> cells = new();
         private readonly int size;
         private readonly IRandomNumberGenerator rng;
 
-        public IEnumerable<Animal> Animals => Cells.SelectMany(x => x.Animals);
+        public IEnumerable<Animal> Animals => cells.SelectMany(x => x.Animals);
 
-        public IEnumerable<Herbivore> Herbivores => Animals.OfType<Herbivore>();
+        public IEnumerable<THerbivore> Herbivores => Animals.OfType<THerbivore>();
 
-        public IEnumerable<Carnivore> Carnivores => Animals.OfType<Carnivore>();
+        public IEnumerable<TCarnivore> Carnivores => Animals.OfType<TCarnivore>();
+
+        public IEnumerable<Cell> Cells => cells.AsReadOnly();
 
         public bool CanCycle => Herbivores.Any() && Carnivores.Any();
             
@@ -35,7 +39,7 @@ namespace TestElders.Models
             {
                 for (int y = 0; y < size; y++)
                 {
-                    Cells.Add(new Cell(new Position(x, y)));
+                    cells.Add(new Cell(new Position(x, y)));
                 }
             }
 
@@ -46,7 +50,7 @@ namespace TestElders.Models
                 var pos = Position.At(col, row);
                 var raceType = rng.GetBetween(0, 2);
                 var gender = Gender.Random(rng);
-                var cell = Cells.First(x => x.Position == pos);
+                var cell = cells.First(x => x.Position == pos);
                 if (raceType == 0)
                     cell.Spawn(new Herbivore(cell, gender));
                 else
@@ -58,7 +62,7 @@ namespace TestElders.Models
         {
             foreach (var animal in Animals.ToList())
             {
-                var cell = Cells.First(x => x.Position == animal.Cell.Position);
+                var cell = cells.First(x => x.Position == animal.Cell.Position);
                 animal.Coupling(rng);
                 animal.Eat(rng);
             }
@@ -69,9 +73,9 @@ namespace TestElders.Models
                 if (IsValidPosition(newPosition) == false)
                     continue;
 
-                var oldCell = Cells.First(x => x.Position == animal.Cell.Position);
+                var oldCell = cells.First(x => x.Position == animal.Cell.Position);
                 oldCell.Leave(animal);
-                var newCell = Cells.First(x => x.Position == newPosition);
+                var newCell = cells.First(x => x.Position == newPosition);
                 newCell.Visit(animal);
             }
         }
