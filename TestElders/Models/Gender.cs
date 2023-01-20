@@ -9,6 +9,9 @@ namespace TestElders.Models
 {
     public class Gender : IEquatable<Gender>
     {
+        public readonly static Gender Male = new Gender("male");
+        public readonly static Gender Female = new Gender("female");
+
         private readonly static IList<string> possibleGenders = new List<string>() { "male", "female" };
         private string value;
 

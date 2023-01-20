@@ -13,7 +13,7 @@ namespace TestElders.Models
         public Animal(Cell cell, Gender gender)
         {
             Cell = cell ?? throw new ArgumentNullException(nameof(cell));
-            Gender = gender;
+            Gender = gender ?? throw new ArgumentNullException(nameof(gender));
         }
 
         public Cell Cell { get; private set; }
