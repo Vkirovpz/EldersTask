@@ -9,7 +9,8 @@ public class Program
     public static void Main(string[] args)
     {
         var dice = new Dice();
-        var world = new World<Carnivore, Herbivore>(1, 8, dice);
+        var animalCreator = new AnimalCreator();
+        var world = new World<Carnivore, Herbivore>(1, 8, dice, animalCreator);
         while (world.CanCycle)
         {
             world.Cycle();

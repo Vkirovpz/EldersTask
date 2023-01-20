@@ -26,11 +26,12 @@ namespace TestElders.Models
 
         public bool CanCycle => Herbivores.Any() && Carnivores.Any();
             
-        public World(int size, int animalsCount, IRandomNumberGenerator rng)
+        public World(int size, int animalsCount, IRandomNumberGenerator rng, IAnimalCreator creator)
         {
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "World size must be a positive number");
             if (animalsCount <= 0) throw new ArgumentOutOfRangeException(nameof(animalsCount), "The amount of animals must be a positive number");
             if (rng is null) throw new ArgumentNullException(nameof(rng));
+            if (creator is null) throw new ArgumentNullException(nameof(creator));
 
             this.size = size;
             this.rng = rng;
@@ -48,13 +49,13 @@ namespace TestElders.Models
                 var col = rng.GetBetween(0, size);
                 var row = rng.GetBetween(0, size);
                 var pos = Position.At(col, row);
-                var raceType = rng.GetBetween(0, 2);
+                var animalType = rng.GetBetween(0, 2);
                 var gender = Gender.Random(rng);
                 var cell = cells.First(x => x.Position == pos);
-                if (raceType == 0)
-                    cell.Spawn(new Herbivore(cell, gender));
+                if (animalType == 0)
+                    cell.Spawn(creator.GetAnimal("herbivore", cell, gender));
                 else
-                    cell.Spawn(new Carnivore(cell, gender));
+                    cell.Spawn(creator.GetAnimal("carnivore", cell, gender));
             }
         }
 

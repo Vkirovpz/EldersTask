@@ -8,8 +8,8 @@ namespace TestElders.Models
 {
     public class Carnivore : Animal
     {
-        private const int AttackChanceLimit = 5;
-        private const int CouplingChanceLimit = 5;
+        private const int AttackChance = 95;
+        private const int CouplingChance = 95;
 
         public Carnivore(Cell cell, Gender gender) : base(cell, gender) { }
 
@@ -23,8 +23,8 @@ namespace TestElders.Models
             if (otherCarnivore is null)
                 return;
 
-            int chance = rng.GetBetween(0, 100);
-            if (chance > CouplingChanceLimit)
+            int randomValue = rng.GetBetween(0, 100);
+            if (randomValue < CouplingChance)
                 Cell.Spawn(new Carnivore(Cell, Gender.Random(rng)));
         }
 
@@ -35,8 +35,8 @@ namespace TestElders.Models
                 return;
 
             var herbivore = others.First();
-            int chance = rng.GetBetween(0, 100);
-            if (chance > AttackChanceLimit)
+            int randomValue = rng.GetBetween(0, 100);
+            if (randomValue < AttackChance)
                 herbivore.Die();
         }
     }
