@@ -8,6 +8,6 @@ namespace TestElders.Models
 {
     public interface IAnimalCreator
     {
-        Animal GetAnimal(string type, Cell cell, Gender gender);
+        Animal Create(Cell cell);
     }
 }

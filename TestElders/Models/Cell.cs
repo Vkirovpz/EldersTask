@@ -21,10 +21,11 @@
             animals.Add(animal);
         }
 
-        public void Spawn(Animal animal)
+        public void Spawn(IAnimalCreator animalCreator)
         {
-            if (animal is null) throw new ArgumentNullException(nameof(animal));
-
+            if (animalCreator is null) throw new ArgumentNullException(nameof(animalCreator));
+            
+            var animal = animalCreator.Create(this);
             animals.Add(animal);
         }
 

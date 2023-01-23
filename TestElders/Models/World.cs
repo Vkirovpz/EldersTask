@@ -25,7 +25,7 @@ namespace TestElders.Models
         public IEnumerable<Cell> Cells => cells.AsReadOnly();
 
         public bool CanCycle => Herbivores.Any() && Carnivores.Any();
-            
+
         public World(int size, int animalsCount, IRandomNumberGenerator rng, IAnimalCreator creator)
         {
             if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size), "World size must be a positive number");
@@ -49,13 +49,8 @@ namespace TestElders.Models
                 var col = rng.GetBetween(0, size);
                 var row = rng.GetBetween(0, size);
                 var pos = Position.At(col, row);
-                var animalType = rng.GetBetween(0, 2);
-                var gender = Gender.Random(rng);
                 var cell = cells.First(x => x.Position == pos);
-                if (animalType == 0)
-                    cell.Spawn(creator.GetAnimal("herbivore", cell, gender));
-                else
-                    cell.Spawn(creator.GetAnimal("carnivore", cell, gender));
+                cell.Spawn(creator);
             }
         }
 
@@ -64,13 +59,13 @@ namespace TestElders.Models
             foreach (var animal in Animals.ToList())
             {
                 var cell = cells.First(x => x.Position == animal.Cell.Position);
-                animal.Coupling(rng);
-                animal.Eat(rng);
+                animal.Couple();
+                animal.Eat();
             }
 
             foreach (var animal in Animals.ToList())
             {
-                var newPosition = animal.Move(rng);
+                var newPosition = animal.Move();
                 if (IsValidPosition(newPosition) == false)
                     continue;
 

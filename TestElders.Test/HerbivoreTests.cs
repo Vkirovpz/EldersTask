@@ -15,7 +15,7 @@ namespace TestElders.Test
             //Arrange + Act + Assert
             var cell = new Cell(new Position(2, 2));
             Assert.Throws<ArgumentNullException>(() => new Herbivore(cell, null));
-            Assert.Throws<ArgumentNullException>(() => new Herbivore(null, Gender.Male));
+            Assert.Throws<ArgumentNullException>(() => new Herbivore(null, RandomNumberGeneratorMock.ZeroDice));
         }
 
         [Fact]
@@ -24,7 +24,7 @@ namespace TestElders.Test
             //Arrange
             var actualCell = new Cell(new Position(2, 2));
             var expectedCell = new Cell(new Position(2, 1));
-            var animal = new Herbivore(actualCell, Gender.Random(new Dice()));
+            var animal = new Herbivore(actualCell, Dice.Shared);
             //Act
             animal.Move(expectedCell);
             //Assert
@@ -36,8 +36,8 @@ namespace TestElders.Test
         {
             //Arrange
             var cell = new Cell(new Position(2, 2));
-            var animal = new Herbivore(cell, Gender.Random(new Dice()));
-            cell.Spawn(animal);
+            var animal = new Herbivore(cell, RandomNumberGeneratorMock.ZeroDice);
+            cell.Visit(animal);
             //Act
             animal.Die();
             //Assert
@@ -49,55 +49,85 @@ namespace TestElders.Test
         {
             //Arrange
             var cell = new Cell(new Position(2, 2));
-            var animal = new Herbivore(cell, Gender.Random(new Dice()));
+            var animal = new Herbivore(cell, new Dice());
             //Act + Assert
             Assert.Throws<ArgumentNullException>(() => animal.Move(new Cell(null)));
         }
 
         [Fact]
-        public void Herbivore_Succes_Coupling_Add_New_Herbivore_To_Cell()
+        public void Female_Herbivore_Success_Couple_Add_New_Herbivore_To_Cell()
         {
             //Arrange      
-            var dice = RandomNumberGeneratorMock.ZeroDice;
             var cell = new Cell(new Position(2, 2));
-            var maleAnimal = new Herbivore(cell, Gender.Male);
-            var femaleAnimal = new Herbivore(cell, Gender.Female);
-            cell.Spawn(maleAnimal);
-            cell.Spawn(femaleAnimal);
+            var maleAnimal = new Herbivore(cell, RandomNumberGeneratorMock.ZeroDice);
+            var femaleAnimal = new Herbivore(cell, RandomNumberGeneratorMock.OneDice);
+            cell.Visit(maleAnimal);
+            cell.Visit(femaleAnimal);
             //Act
-            maleAnimal.Coupling(dice);
+            femaleAnimal.Couple();
             //Assert
             Assert.Equal(3, cell.Animals.Count());
         }
 
         [Fact]
-        public void Herbivore_Insufficient_Chance_To_Coupling_Dont_Add_New_Herbivore_To_Cell()
+        public void Male_Herbivore_Success_Couple_Dont_Add_New_Herbivore_To_Cell()
         {
             //Arrange      
-            var dice = RandomNumberGeneratorMock.OneHundredDice;
             var cell = new Cell(new Position(2, 2));
-            var maleAnimal = new Herbivore(cell, Gender.Male);
-            var femaleAnimal = new Herbivore(cell, Gender.Female);
-            cell.Spawn(maleAnimal);
-            cell.Spawn(femaleAnimal);
+            var maleAnimal = new Herbivore(cell, RandomNumberGeneratorMock.ZeroDice);
+            var femaleAnimal = new Herbivore(cell, RandomNumberGeneratorMock.OneDice);
+            cell.Visit(maleAnimal);
+            cell.Visit(femaleAnimal);
             //Act
-            maleAnimal.Coupling(dice);
+            maleAnimal.Couple();
             //Assert
             Assert.Equal(2, cell.Animals.Count());
         }
 
         [Fact]
-        public void Herbivore_Cant_Coupling_Carnivore_Dont_Add_New_Herbivore_To_Cell()
+        public void Herbivore_Insufficient_Chance_To_Couple_Dont_Add_New_Herbivore_To_Cell()
+        {
+            //Arrange      
+            var dice = RandomNumberGeneratorMock.OneHundredDice;
+            var cell = new Cell(new Position(2, 2));
+            var maleAnimal = new Herbivore(cell, RandomNumberGeneratorMock.ZeroDice);
+            var femaleAnimal = new Herbivore(cell, RandomNumberGeneratorMock.OneDice);
+            cell.Spawn(maleAnimal);
+            cell.Spawn(femaleAnimal);
+            //Act
+            maleAnimal.Couple();
+            //Assert
+            Assert.Equal(2, cell.Animals.Count());
+        }
+
+        [Fact]
+        public void Herbivore_Cant_Couple_Carnivore_Dont_Add_New_Herbivore_To_Cell()
         {
             //Arrange      
             var dice = RandomNumberGeneratorMock.ZeroDice;
             var cell = new Cell(new Position(2, 2));
-            var maleAnimal = new Herbivore(cell, Gender.Male);
-            var otherMaleAnimal = new Carnivore(cell, Gender.Female);
+            var herbivore = new Herbivore(cell, RandomNumberGeneratorMock.OneDice);
+            var carnivore = new Carnivore(cell, RandomNumberGeneratorMock.ZeroDice);
+            cell.Spawn(herbivore);
+            cell.Spawn(carnivore);
+            //Act
+            herbivore.Couple();
+            //Assert
+            Assert.Equal(2, cell.Animals.Count());
+        }
+
+        [Fact]
+        public void Herbivore_Cant_Couple_With_Same_Gender_Dont_Add_New_Carnivore_To_Cell()
+        {
+            //Arrange      
+            var dice = RandomNumberGeneratorMock.ZeroDice;
+            var cell = new Cell(new Position(2, 2));
+            var maleAnimal = new Herbivore(cell, dice);
+            var otherMaleAnimal = new Herbivore(cell, dice);
             cell.Spawn(maleAnimal);
             cell.Spawn(otherMaleAnimal);
             //Act
-            maleAnimal.Coupling(dice);
+            maleAnimal.Couple();
             //Assert
             Assert.Equal(2, cell.Animals.Count());
         }

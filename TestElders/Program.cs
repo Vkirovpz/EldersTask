@@ -8,9 +8,8 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var dice = new Dice();
-        var animalCreator = new AnimalCreator();
-        var world = new World<Carnivore, Herbivore>(1, 8, dice, animalCreator);
+        var animalCreator = new AnimalCreator(Dice.Shared);
+        var world = new World<Carnivore, Herbivore>(1, 8, Dice.Shared, animalCreator);
         while (world.CanCycle)
         {
             world.Cycle();
