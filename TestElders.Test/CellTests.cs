@@ -30,24 +30,21 @@ namespace TestElders.Test
         public void CellSpawn_Add_Animal()
         {
             //Arrange
-            var dice = new Dice();
             var cell = new Cell(new Position(2, 2));
-            var gender = Gender.Random(dice);
-            var animal = new Carnivore(cell, gender);
+            var cellInitialAnimalsCount = cell.Animals.Count();
+            var animalCreator = new AnimalCreator(RandomNumberGeneratorMock.ZeroDice);
             //Act
-            cell.Spawn(animal);
+            cell.Spawn(animalCreator);
             //Assert
-            Assert.Contains(animal, cell.Animals);
+            Assert.Single(cell.Animals);
         }
 
         [Fact]
         public void CellLeave_Remove_Animal()
         {
             //Arrange
-            var dice = new Dice();
             var cell = new Cell(new Position(2, 2));
-            var gender = Gender.Random(dice);
-            var animal = new Carnivore(cell, gender);
+            var animal = new Carnivore(cell, RandomNumberGeneratorMock.ZeroDice);
             //Act
             cell.Leave(animal);
             //Assert
@@ -58,11 +55,9 @@ namespace TestElders.Test
         public void CellVisit_Add_Animal()
         {
             //Arrange
-            var dice = new Dice();
             var actualCell = new Cell(new Position(2, 2));
             var expectedlCell = new Cell(new Position(2, 1));
-            var gender = Gender.Random(dice);
-            var animal = new Carnivore(actualCell, gender);
+            var animal = new Carnivore(actualCell, RandomNumberGeneratorMock.ZeroDice);
             actualCell.Spawn(animal);
             //Act
             expectedlCell.Visit(animal);
